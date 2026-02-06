@@ -366,7 +366,7 @@ export default function MoviesAppScreen() {
               </View>
             </View>
 
-            {!!searchError && <Text className="text-red-500 mt-4">Movie/TV Show Name Is Required</Text>}
+            {!!searchError && <Text className="text-red-500 -mt-1">Movie/TV Show Name Is Required</Text>}
           </View>
         )}
       </View>
@@ -378,8 +378,8 @@ export default function MoviesAppScreen() {
       ) : null}
 
       {showSearchPrompt ? (
-        <View className="flex-1  justify-center px-8 ">
-          <Text className="text-2xl font-semibold text-gray-800 text-center ">Please initiate a search.</Text>
+        <View className="flex-1 px-4 pt-24">
+          <Text className="text-3xl font-semibold text-gray-800 text-center ">Please initiate a search</Text>
         </View>
       ) : isSearchLoading ? (
         <View className="flex-1 items-center justify-center">
