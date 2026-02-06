@@ -38,6 +38,25 @@ function getTitle(item) {
   return item?.title || item?.name || item?.original_title || item?.original_name || "Untitled";
 }
 
+/** Keep only results whose primary title/name contains the search query (case-insensitive). */
+function primaryTitleMatchesQuery(item, query, searchType) {
+  const q = (query || "").trim().toLowerCase();
+  if (!q) return true;
+  let primary;
+  if (searchType === "multi") {
+    if (item.media_type === "movie") primary = item.title || item.original_title || "";
+    else if (item.media_type === "tv") primary = item.name || item.original_name || "";
+    else return false;
+  } else if (searchType === "movie") {
+    primary = item.title || item.original_title || "";
+  } else if (searchType === "tv") {
+    primary = item.name || item.original_name || "";
+  } else {
+    return true;
+  }
+  return (primary || "").toLowerCase().includes(q);
+}
+
 function getDate(item) {
   return item?.release_date || item?.first_air_date || "";
 }
@@ -243,7 +262,11 @@ export default function MoviesAppScreen() {
           store.totalPages = Math.max(1, Number(data?.total_pages || 1));
           store.totalResults = Number(data?.total_results || 0);
           const filtered = Array.isArray(data?.results)
-            ? data.results.filter((r) => r.media_type === "movie" || r.media_type === "tv")
+            ? data.results.filter(
+                (r) =>
+                  (r.media_type === "movie" || r.media_type === "tv") &&
+                  primaryTitleMatchesQuery(r, q, "multi")
+              )
             : [];
           store.items = store.items.concat(filtered);
           store.nextPage += 1;
@@ -304,7 +327,9 @@ export default function MoviesAppScreen() {
       const tmdbPage = Math.max(1, Math.ceil(localPage / 2));
       const data = await fetchSearch(searchType, q, tmdbPage);
       if (searchRequestId !== searchRequestIdRef.current) return;
-      const all = Array.isArray(data?.results) ? data.results : [];
+      const all = Array.isArray(data?.results)
+        ? data.results.filter((r) => primaryTitleMatchesQuery(r, q, searchType))
+        : [];
       const sliceStart = localPage % 2 === 1 ? 0 : perPage;
       setResults(all.slice(sliceStart, sliceStart + perPage));
       setTotalResults(Number(data?.total_results || 0));
