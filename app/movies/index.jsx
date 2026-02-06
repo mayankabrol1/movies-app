@@ -136,7 +136,7 @@ export default function MoviesAppScreen() {
   const [totalResults, setTotalResults] = useState(0);
   const [pageChanging] = useState(false);
 
-  // Bonus pagination: 10 per page (local slice of the response)
+ 
   const perPage = 10;
   const [pageIndex, setPageIndex] = useState(1);
 
@@ -325,7 +325,7 @@ export default function MoviesAppScreen() {
     if (activeTab === TAB_KEYS.movies) loadMovies();
     if (activeTab === TAB_KEYS.tv) loadTv();
     if (activeTab === TAB_KEYS.search) {
-      // On initial visit, show prompt message until user searches.
+      
       if (hasSearched && query.trim()) loadSearch();
       else {
         setResults([]);
@@ -333,12 +333,12 @@ export default function MoviesAppScreen() {
         setSearchCompleted(false);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [activeTab, movieType, tvType, pageIndex]);
 
   useEffect(() => {
     if (activeTab === TAB_KEYS.search && hasSearched && query.trim()) loadSearch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [searchType, pageIndex]);
 
   const showSearchPrompt = activeTab === TAB_KEYS.search && !hasSearched;
